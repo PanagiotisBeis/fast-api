@@ -9,6 +9,10 @@
     app_port: "{{ app_port }}"
 
   tasks:
+    - name: Login to Docker Hub
+      community.docker.docker_login:
+        username: "{{ dockerhub_username }}"
+        password: "{{ dockerhub_token }}"  
     - name: Pull application image
       community.docker.docker_image:
         name: "{{ image }}"

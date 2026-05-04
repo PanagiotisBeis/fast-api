@@ -49,22 +49,26 @@ pipeline {
                         credentialsId: 'app-ec2-ssh-key',
                         keyFileVariable: 'SSH_KEY',
                         usernameVariable: 'SSH_USER'
+                    ),
+                    usernamePassword(
+                        credentialsId: 'fast-api',
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_TOKEN'
                     )
                 ]) {
                     sh '''
-                        ansible-galaxy collection install community.docker
-
                         ansible-playbook \
-                          -i ansible/inventory.ini \
-                          ansible/deploy.yml \
-                          --private-key "$SSH_KEY" \
-                          -u "$SSH_USER" \
-                          -e "image=$DOCKER_IMAGE:$IMAGE_TAG" \
-                          -e "container_name=$CONTAINER_NAME" \
-                          -e "app_port=$APP_PORT"
+                        -i ansible/inventory.ini \
+                        ansible/deploy.yml \
+                        --private-key "$SSH_KEY" \
+                        -u "$SSH_USER" \
+                        -e "image=$DOCKER_IMAGE:$IMAGE_TAG" \
+                        -e "container_name=$CONTAINER_NAME" \
+                        -e "app_port=$APP_PORT" \
+                        -e "dockerhub_username=$DOCKERHUB_USERNAME" \
+                        -e "dockerhub_token=$DOCKERHUB_TOKEN"
                     '''
                 }
-            }
         }
     }
 
