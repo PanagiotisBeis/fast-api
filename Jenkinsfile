@@ -39,7 +39,6 @@ pipeline {
 
         stage('Deploy with Ansible') {
             environment {
-                APP_SERVER_IP = '18.196.197.231'
                 CONTAINER_NAME = 'service-status-api'
                 APP_PORT = '8000'
             }
@@ -53,45 +52,16 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                        cat > inventory.ini <<EOF
-[app]
-${APP_SERVER_IP} ansible_user=${SSH_USER} ansible_ssh_private_key_file=${SSH_KEY} ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-EOF
-
-                        cat > deploy.yml <<EOF
-- name: Deploy FastAPI container
-  hosts: app
-  become: yes
-
-  tasks:
-    - name: Pull application image
-      community.docker.docker_image:
-        name: "${DOCKER_IMAGE}:${IMAGE_TAG}"
-        source: pull
-
-    - name: Stop and remove old container
-      community.docker.docker_container:
-        name: "${CONTAINER_NAME}"
-        state: absent
-
-    - name: Run new container
-      community.docker.docker_container:
-        name: "${CONTAINER_NAME}"
-        image: "${DOCKER_IMAGE}:${IMAGE_TAG}"
-        state: started
-        restart_policy: always
-        ports:
-          - "${APP_PORT}:8000"
-
-    - name: Check application health
-      uri:
-        url: "http://localhost:${APP_PORT}/health"
-        method: GET
-        status_code: 200
-EOF
-
                         ansible-galaxy collection install community.docker
-                        ansible-playbook -i inventory.ini deploy.yml
+
+                        ansible-playbook \
+                          -i ansible/inventory.ini \
+                          ansible/deploy.yml \
+                          --private-key "$SSH_KEY" \
+                          -u "$SSH_USER" \
+                          -e "image=$DOCKER_IMAGE:$IMAGE_TAG" \
+                          -e "container_name=$CONTAINER_NAME" \
+                          -e "app_port=$APP_PORT"
                     '''
                 }
             }
