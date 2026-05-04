@@ -1,5 +1,12 @@
 #  FastAPI CI/CD Pipeline (Jenkins + Docker + Ansible + AWS)
 
+![CI](https://img.shields.io/badge/CI-Jenkins-blue?logo=jenkins)
+![CD](https://img.shields.io/badge/CD-Ansible-red?logo=ansible)
+![Docker](https://img.shields.io/badge/Container-Docker-2496ED?logo=docker&logoColor=white)
+![Cloud](https://img.shields.io/badge/Cloud-AWS-FF9900?logo=amazonaws&logoColor=white)
+![Python](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Production--like-success)
+
 ## Overview
 
 This project demonstrates a complete **CI/CD pipeline** for deploying a Python FastAPI application using:
