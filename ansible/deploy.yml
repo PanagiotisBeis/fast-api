@@ -37,3 +37,7 @@
         url: "http://localhost:{{ app_port }}/health"
         method: GET
         status_code: 200
+      register: health_check
+      retries: 10
+      delay: 3
+      until: health_check.status == 200
